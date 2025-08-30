@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sensitive Data Tracker</title>
+  <style>
+    table { border-collapse: collapse; width: 80%; margin: 20px 0; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    .sensitive { background-color: #ffcccc; }
+  </style>
+</head>
+<body>
+  <h1>Sensitive Data Tracker</h1>
+
+  <h2>Upload CSV / File</h2>
+  <%= form_with url: "/upload", local: true, method: :post, multipart: true do |f| %>
+    <%= f.file_field :file %>
+    <%= f.submit "Upload" %>
+  <% end %>
+
+  <h2>Compliance Stats</h2>
+  <p>Total Records: <%= @total || 0 %></p>
+  <p>Sensitive Records: <%= @sensitive || 0 %></p>
+  <p>Compliance Score: <%= @score || 0 %>%</p>
+
+  <h2>Data Table</h2>
+  <% if @records.any? %>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>PAN</th>
+        <th>Aadhaar</th>
+        <th>Sensitive?</th>
+      </tr>
+      <% @records.each do |r| %>
+        <tr class="<%= 'sensitive' if r.is_sensitive %>">
+          <td><%= r.name %></td>
+          <td><%= r.email %></td>
+          <td><%= r.phone %></td>
+          <td><%= r.pan %></td>
+          <td><%= r.aadhaar %></td>
+          <td><%= r.is_sensitive ? 'Yes' : 'No' %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% else %>
+    <p>No records found. Please upload a file.</p>
+  <% end %>
+</body>
+</html>
